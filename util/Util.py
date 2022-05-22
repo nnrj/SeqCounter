@@ -4,7 +4,7 @@
 # @Author  : name
 # @File    : Util.py
 import json
-from TimeUtil import TimeUtil
+from util import TimeUtil
 
 
 class Util:
@@ -20,7 +20,7 @@ class Util:
     # 读取配置文件
     @staticmethod
     def load_setting():
-        setting_path = "resources/setting.json"
+        setting_path = "ini/setting.json"
         with open(setting_path, 'r') as setting_file:
             return json.load(setting_file)
 

@@ -1,21 +1,28 @@
 import os
 import re
 import time
-from string import digits
 import sys
-import argparse
+import getopt
+from string import digits
+from util.Util import Util
 
 
 class SeqCounter:
     def __init__(self):
-        self.seq_path = './seqs/'
-        self.encoding = 'utf-8'
+        self.setting_json = Util.load_setting()
+        # print(self.setting_json)
+        # self.seq_path = './seqs/'
+        self.encoding = self.setting_json['seqCounter']['encoding']
+        self.seq_path = self.setting_json['seqCounter']['inputOptions']['seqPath']
+        # self.result_path = './results/'
+        self.result_path = self.setting_json['seqCounter']['outputOptions']['resultPath']
         self.time_str = str(time.strftime('%Y%m%d%H%M%S', time.localtime()))
-        self.result_path = './results/'
-        self.save_file = 'result' + self.time_str + '.log'
-        self.check_file_path = './virusinfo.ini'
+        self.save_file = 'result' + self.time_str + self.setting_json['seqCounter']['outputOptions'][
+            'resultExtensionName']
+        # self.seq_type_file_path = './virusinfo.ini'
+        self.seq_type_file_path = self.setting_json['seqCounter']['constraintOptions']['seqTypeList']
         self.virus_info_list = []
-        self.check_type_flag = True
+        self.check_type_flag = bool(self.setting_json['seqCounter']['constraintOptions']['seqTypeCheck'])
 
     def read_path(self):
         if not os.path.isdir(self.seq_path):
@@ -43,7 +50,7 @@ class SeqCounter:
         return file_name_list
 
     def read_virusinfo(self):
-        if not os.path.exists(self.check_file_path):
+        if not os.path.exists(self.seq_type_file_path):
             print("警告：类型约束文件不存在，将跳过类型判断。")
             return False
         with open('virusinfo.ini', 'r', encoding=self.encoding) as file:
@@ -192,8 +199,30 @@ class SeqCounter:
         print("请使用任意文本编辑器打开查看。")
         print("-" * 50)
 
+    def getArgs(self, argv):
+        input_path = self.seq_path
+        output_path = self.result_path
+        try:
+            opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
+        except getopt.GetoptError:
+            print('SeqCounter.py -i <inputfile> -o <outputfile>')
+            sys.exit(2)
+        for opt, arg in opts:
+            if opt == '-h':
+                print('SeqCounter.py -i <inputfile> -o <outputfile>')
+                sys.exit()
+            elif opt in ("-i", "--ifile"):
+                input_path = arg
+            elif opt in ("-o", "--ofile"):
+                output_path = arg
+        self.seq_path = input_path
+        self.result_path = output_path
+        print('输入的文件目录：', input_path)
+        print('输出的文件目录：', output_path)
+
 
 # 运行
 if __name__ == '__main__':
     seqCounter = SeqCounter()
+    seqCounter.getArgs(sys.argv[1:])
     seqCounter.run()
