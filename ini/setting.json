@@ -1,0 +1,33 @@
+{
+    "db": {
+        "host": "localhost",
+        "user": "root",
+        "passwd":"NN1235nn",
+        "database": "dis_recdeper",
+        "charset": "utf8"
+    },
+    "timers": {
+        "zhihu": {
+            "interval": "5",
+            "unit": "minutes"
+        },
+        "weibo": {
+            "interval": "30",
+            "unit": "minutes"
+        }
+    },
+    "encoding": "utf-8",
+    "inputOptions": {
+        "seqPath": "./ini/seqs",
+        "seqExtensionName":".txt",
+        "encoding": "utf-8"
+    },
+    "outputOptions": {
+        "resultPath": "./results/",
+        "resultExtensionName": ".log",
+        "encoding": "utf-8"
+    },
+    "constraintOptions": {
+        "seqTypeList": "./ini/virusinfo.ini"
+    }
+}
