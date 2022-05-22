@@ -10,16 +10,12 @@ from util.Util import Util
 class SeqCounter:
     def __init__(self):
         self.setting_json = Util.load_setting()
-        # print(self.setting_json)
-        # self.seq_path = './seqs/'
         self.encoding = self.setting_json['seqCounter']['encoding']
         self.seq_path = self.setting_json['seqCounter']['inputOptions']['seqPath']
-        # self.result_path = './results/'
         self.result_path = self.setting_json['seqCounter']['outputOptions']['resultPath']
         self.time_str = str(time.strftime('%Y%m%d%H%M%S', time.localtime()))
         self.save_file = 'result' + self.time_str + self.setting_json['seqCounter']['outputOptions'][
             'resultExtensionName']
-        # self.seq_type_file_path = './virusinfo.ini'
         self.seq_type_file_path = self.setting_json['seqCounter']['constraintOptions']['seqTypeList']
         self.virus_info_list = []
         self.check_type_flag = bool(self.setting_json['seqCounter']['constraintOptions']['seqTypeCheck'])
@@ -53,7 +49,7 @@ class SeqCounter:
         if not os.path.exists(self.seq_type_file_path):
             print("警告：类型约束文件不存在，将跳过类型判断。")
             return False
-        with open('virusinfo.ini', 'r', encoding=self.encoding) as file:
+        with open(self.seq_type_file_path, 'r', encoding=self.encoding) as file:
             content = file.read()
             if not content or len(content) <= 0:
                 print("警告：类型约束文件内容为空，将跳过类型判断。")
