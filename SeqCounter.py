@@ -198,23 +198,29 @@ class SeqCounter:
     def getArgs(self, argv):
         input_path = self.seq_path
         output_path = self.result_path
+        check_path = self.seq_type_file_path
         try:
-            opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
-        except getopt.GetoptError:
-            print('SeqCounter.py -i <inputfile> -o <outputfile>')
+            opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile=", "cfile="])
+        except Exception as e:
+            print('SeqCounter.py -i <inputfile> -o <outputfile> -c <checkfile>')
+            print(e)
             sys.exit(2)
         for opt, arg in opts:
             if opt == '-h':
-                print('SeqCounter.py -i <inputfile> -o <outputfile>')
+                print('SeqCounter.py -i <inputfile> -o <outputfile> -c <checkfile> xxx')
                 sys.exit()
             elif opt in ("-i", "--ifile"):
                 input_path = arg
             elif opt in ("-o", "--ofile"):
                 output_path = arg
+            elif opt in ("-c", "--cfile"):
+                check_path = arg
         self.seq_path = input_path
         self.result_path = output_path
-        print('输入文件目录：', input_path)
-        print('输出文件目录：', output_path)
+        self.seq_type_file_path = check_path
+        print('输入文件目录：', self.seq_path)
+        print('输出文件目录：', self.result_path)
+        print('约束文件目录：', self.seq_type_file_path)
 
 
 # 运行
