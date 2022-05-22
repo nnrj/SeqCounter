@@ -1,0 +1,20 @@
+{
+    "seqCounter": {
+        "encoding": "utf-8",
+        "inputOptions": {
+            "seqPath": "./seqs/",
+            "seqExtensionName":".txt",
+            "encoding": "utf-8"
+        },
+        "outputOptions": {
+            "resultPath": "./results/",
+            "resultExtensionName": ".log",
+            "encoding": "utf-8"
+        },
+        "constraintOptions": {
+            "seqTypeList": "./ini/virusinfo.ini",
+            "seqTypeCheck": "True"
+        }
+    }
+
+}
