@@ -217,8 +217,8 @@ class SeqCounter:
                 output_path = arg
         self.seq_path = input_path
         self.result_path = output_path
-        print('输入的文件目录：', input_path)
-        print('输出的文件目录：', output_path)
+        print('输入文件目录：', input_path)
+        print('输出文件目录：', output_path)
 
 
 # 运行
