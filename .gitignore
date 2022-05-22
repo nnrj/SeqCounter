@@ -2,6 +2,7 @@
 /.idea
 /build
 /__pycache__
+/dist/seqCounter.exe
 
 # local env files
 .env.local
