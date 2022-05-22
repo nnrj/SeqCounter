@@ -8,11 +8,11 @@ import argparse
 
 class SeqCounter:
     def __init__(self):
-        self.seq_path = './seqs'
+        self.seq_path = './seqs/'
         self.encoding = 'utf-8'
         self.time_str = str(time.strftime('%Y%m%d%H%M%S', time.localtime()))
-        self.save_folder = './'
-        self.save_path = 'result' + self.time_str + '.log'
+        self.result_path = './results/'
+        self.save_file = 'result' + self.time_str + '.log'
         self.check_file_path = './virusinfo.ini'
         self.virus_info_list = []
         self.check_type_flag = True
@@ -167,7 +167,7 @@ class SeqCounter:
     def save_result(self, result_list):
         if not result_list or len(result_list) <= 0:
             return False
-        with open(self.save_folder + self.save_path, 'w', encoding=self.encoding) as file:
+        with open(self.result_path + self.save_file, 'w', encoding=self.encoding) as file:
             for result in result_list:
                 file.write("文件" + str(result['file_index']) + "：\n\t文件名：" + result['file_name'] + "\n")
                 file.write("\t序列数：" + str(result['seq_num']) + "\n")
@@ -188,45 +188,12 @@ class SeqCounter:
         self.save_result(result_list)
         print()
         print("-" * 50)
-        print("统计完毕，结果已保存于[" + self.save_folder + self.save_path + "]中。")
+        print("统计完毕，结果已保存于[" + self.result_path + self.save_file + "]中。")
         print("请使用任意文本编辑器打开查看。")
         print("-" * 50)
 
 
 # 运行
-# if __name__ == '__main__':
-#     parser = argparse.ArgumentParser()
-#     seq_path = './seqs'
-#     if len(sys.argv) > 1:
-#         seq_path = str(sys.argv[1])
-#     parser.add_argument('-c', type=str, default='./virusinfo.ini')
-#     parser.add_argument('--o', type=str, default='./')
-#     args = parser.parse_args()
-#     print(args)
-#     seqCounter = SeqCounter('./seqs')
-#     if os.path.exists(seq_path) and os.path.isdir(seq_path):
-#         seqCounter.seq_path = seq_path
-#     if os.path.exists(args.c):
-#         seqCounter.check_file_path = args.c
-#     if os.path.exists(args.o):
-#         seqCounter.save_folder = args.o
-#     seqCounter.run()
-
-# 运行
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    seq_path = './seqs'
-    if len(sys.argv) > 1:
-        seq_path = str(sys.argv[1])
-    parser.add_argument('-c', type=str, default='./virusinfo.ini')
-    parser.add_argument('--o', type=str, default='./')
-    args = parser.parse_args()
-    print(args)
-    seqCounter = SeqCounter('./seqs')
-    if os.path.exists(seq_path) and os.path.isdir(seq_path):
-        seqCounter.seq_path = seq_path
-    if os.path.exists(args.c):
-        seqCounter.check_file_path = args.c
-    if os.path.exists(args.o):
-        seqCounter.save_folder = args.o
+    seqCounter = SeqCounter()
     seqCounter.run()
