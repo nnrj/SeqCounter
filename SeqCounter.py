@@ -226,6 +226,9 @@ class SeqCounter:
                 print("\t[-c] 指定约束文件路径")
                 print("\t[-v] 查看版本号")
                 print("\t[-h] 查看帮助信息\n")
+
+                print("本项目以GPL3.0协议开源：https://github.com/nnrj/SeqCounter")
+                print("开发者：天河何处")
                 sys.exit(0)
         self.seq_path = input_path
         self.result_path = output_path
