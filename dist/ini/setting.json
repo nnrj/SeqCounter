@@ -1,4 +1,5 @@
 {
+    "version": "2.0.2",
     "seqCounter": {
         "encoding": "utf-8",
         "inputOptions": {

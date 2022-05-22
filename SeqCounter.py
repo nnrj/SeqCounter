@@ -10,6 +10,7 @@ from util.Util import Util
 class SeqCounter:
     def __init__(self):
         self.setting_json = Util.load_setting()
+        self.version = self.setting_json['version']
         self.encoding = self.setting_json['seqCounter']['encoding']
         self.seq_path = self.setting_json['seqCounter']['inputOptions']['seqPath']
         self.result_path = self.setting_json['seqCounter']['outputOptions']['resultPath']
@@ -200,14 +201,14 @@ class SeqCounter:
         output_path = self.result_path
         check_path = self.seq_type_file_path
         try:
-            opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile=", "cfile="])
+            opts, args = getopt.getopt(argv, "i:o:c:v:h", ["ifile=", "ofile=", "cfile=", "version", "help"])
         except Exception as e:
             print('SeqCounter.py -i <inputfile> -o <outputfile> -c <checkfile>')
-            print(e)
+            # print(e)
             sys.exit(2)
         for opt, arg in opts:
             if opt == '-h':
-                print('SeqCounter.py -i <inputfile> -o <outputfile> -c <checkfile> xxx')
+                print('SeqCounter.py -i <inputfile> -o <outputfile> -c <checkfile>')
                 sys.exit()
             elif opt in ("-i", "--ifile"):
                 input_path = arg
@@ -215,6 +216,17 @@ class SeqCounter:
                 output_path = arg
             elif opt in ("-c", "--cfile"):
                 check_path = arg
+            elif opt in ("-v", "--version"):
+                print("SeqCounter version：" + self.version)
+                sys.exit(0)
+            elif opt in ("-h", "--help"):
+                print("SeqCounter Help：\n")
+                print("\t[-i] 指定输入文件路径")
+                print("\t[-o] 指定输出文件路径")
+                print("\t[-c] 指定约束文件路径")
+                print("\t[-v] 查看版本号")
+                print("\t[-h] 查看帮助信息\n")
+                sys.exit(0)
         self.seq_path = input_path
         self.result_path = output_path
         self.seq_type_file_path = check_path
