@@ -24,8 +24,6 @@ class SeqCounter:
         self.split_symbol_list = self.setting_json['seqCounter']['inputOptions']['symbols']
         self.compare = bool(self.setting_json['seqCounter']['outputOptions']['compare'])
         self.combine_compare = bool(self.setting_json['seqCounter']['outputOptions']['combineCompare'])
-        print("是否判断类型：" + str(self.check_type_flag))
-        print("比对模式：" + str(self.combine_compare))
 
     def read_path(self):
         if not os.path.isdir(self.seq_path):
@@ -173,54 +171,20 @@ class SeqCounter:
             return False
         line_seq_list = []
         for result in result_list:
-            # item = {'file_index': result['file_index'], 'file_name': result['file_name'], result['seq_list']}
             seq_list = result['seq_list']
             for seq in seq_list:
-                # item = {'file_index': result['file_index'], 'file_name': result['file_name'], 'seq_list': result['seq_list']}
                 seq['file_index'] = result['file_index']
                 seq['file_name'] = result['file_name']
                 seq['seq_list'] = result['seq_list']
                 line_seq_list.append(seq)
         return line_seq_list
 
-    # def compare_seq_body(self, result_list):
-    #     if not result_list or len(result_list) <= 0:
-    #         return False
-    #     line_seq_list = self.combine_result(result_list)
-    #     if not line_seq_list or len(line_seq_list) <= 0:
-    #         return False
-    #     same_seq_list = []
-    #     for seq1 in line_seq_list:
-    #         # seq_body = seq1['seq_body']
-    #         for seq2 in line_seq_list:
-    #             if seq1['seq_body'] == seq2['seq_body']:
-    #                 item = {''}
-
-    # def compare_seq_body(self, line_seq_list):
-    #     if not line_seq_list or len(line_seq_list) <= 0:
-    #         return False
-    #     # same_seq_list = []
-    #     same_map = {}
-    #     for seq1 in line_seq_list:
-    #         # seq_body = seq1['seq_body']
-    #         for seq2 in line_seq_list:
-    #             if seq1['seq_body'] == seq2['seq_body']:
-    #                 # item = {''}
-    #                 secret = md5()
-    #                 secret.update(seq1['seq_body'])
-    #                 finger = secret.hexdigest()
-    #                 if finger in same_map:
-    #                     seq_list = same_map[finger]
-    #                     seq_list.append(line_seq_list)
-
     def compare_seq_body(self, line_seq_list):
         if not line_seq_list or len(line_seq_list) <= 0:
             return False
-        # same_seq_list = []
         same_body_map = {}
         for seq in line_seq_list:
             secret = md5()
-            # print(seq['seq_body'])
             secret.update(str(seq['seq_body']).encode())
             finger = secret.hexdigest()
             if finger in same_body_map:
@@ -229,81 +193,7 @@ class SeqCounter:
             else:
                 same_body_map[finger] = [seq]
         return same_body_map
-    # def compare_seq_body(self, line_seq_list):
-    #     if not line_seq_list or len(line_seq_list) <= 0:
-    #         return False
-    #     same_body_map = {}
-    #     for seq in line_seq_list:
-    #         if seq['seq_body'] in same_body_map:
-    #             seq_list = same_body_map[seq['seq_body']]
-    #             seq_list.append(seq)
-    #         else:
-    #             same_body_map[seq['seq_body']] = [seq]
-    #     return same_body_map
 
-    # def show_compare(self, result_list):
-    #     have_same_flag = False
-    #     if self.combine_compare:
-    #         print("\n序列对比结果（模式：跨文件）,以下序列相同：")
-    #     else:
-    #         print("\n序列对比结果（模式：文件内）,以下序列相同：")
-    #     if not result_list or len(result_list) <= 0:
-    #         print("无。")
-    #         return False
-    #     if self.combine_compare:
-    #         line_seq_list = self.combine_result(result_list)
-    #         same_body_map = self.compare_seq_body(line_seq_list)
-    #         if not same_body_map:
-    #             print("无。")
-    #             return False
-    #         # print("\n序列对比结果（模式：跨文件）,以下序列相同：")
-    #         if not have_same_flag:
-    #             have_same_flag = True
-    #         for key in same_body_map:
-    #             same_seq_list = same_body_map[key]
-    #             if len(same_seq_list) > 1:
-    #                 if self.check_type_flag:
-    #                     print("所在文件：" + same_seq_list[0]['file_name'] + "， 序列类型：" + same_seq_list[0]['virus_name'])
-    #                 else:
-    #                     print("所在文件：" + same_seq_list[0]['file_name'])
-    #                 same_seq_str = ""
-    #                 first_falg = True
-    #                 for same_seq in same_seq_list:
-    #                     if first_falg:
-    #                         same_seq_str += same_seq['seq_name']
-    #                         first_falg = False
-    #                         continue
-    #                     same_seq_str += ("," + same_seq['seq_name'])
-    #                 print("\t相同序列：" + same_seq_str)
-    #     else:
-    #         # print("\n序列对比结果（模式：文件内）,以下序列相同：")
-    #         for result in result_list:
-    #             line_seq_list = result['seq_list']
-    #             if not line_seq_list or len(line_seq_list) <= 0:
-    #                 continue
-    #             same_body_map = self.compare_seq_body(line_seq_list)
-    #             if not same_body_map:
-    #                 continue
-    #             if not have_same_flag:
-    #                 have_same_flag = True
-    #             if self.check_type_flag:
-    #                 print("所在文件：" + result['file_name'] + "， 序列类型：" + result['virus_name'])
-    #             else:
-    #                 print("所在文件：" + result['file_name'])
-    #             for key in same_body_map:
-    #                 same_seq_list = same_body_map[key]
-    #                 if len(same_seq_list) > 1:
-    #                     same_seq_str = ""
-    #                     first_falg = True
-    #                     for same_seq in same_seq_list:
-    #                         if first_falg:
-    #                             same_seq_str += same_seq['seq_name']
-    #                             first_falg = False
-    #                             continue
-    #                         same_seq_str += ("," + same_seq['seq_name'])
-    #                     print("\t相同序列：" + same_seq_str)
-    #         if not have_same_flag:
-    #             print("无。")
     def print_compare(self, result_list):
         compare_info = ""
         have_same_flag = False
@@ -346,13 +236,6 @@ class SeqCounter:
                 same_body_map = self.compare_seq_body(line_seq_list)
                 if not same_body_map:
                     continue
-                # if not have_same_flag:
-                #     have_same_flag = True
-                # if self.check_type_flag:
-                #     compare_info += "所在文件：" + result['file_name'] + "， 序列类型：" + result['virus_name'] + "\n"
-                # else:
-                #     compare_info += "所在文件：" + result['file_name'] + "\n"
-                # compare_info += "所在文件：" + result['file_name'] + "\n"
                 for key in same_body_map:
                     same_seq_list = same_body_map[key]
                     if len(same_seq_list) > 1:
@@ -370,8 +253,8 @@ class SeqCounter:
                                 continue
                             same_seq_str += ("," + same_seq['seq_name'])
                         compare_info += "\t相同序列：" + same_seq_str + "\n"
-            if not have_same_flag:
-                compare_info += "无。" + "\n"
+        if not have_same_flag:
+            compare_info += "无。" + "\n"
         return compare_info
 
     def print_result(self, result_list):
@@ -394,44 +277,9 @@ class SeqCounter:
             result_info += self.print_compare(result_list)
         return result_info
 
-    # def show_result(self, result_list):
-    #     if not result_list or len(result_list) <= 0:
-    #         return False
-    #     for result in result_list:
-    #         print("文件" + str(result['file_index']) + "：\n\t文件名：" + result['file_name'])
-    #         print("\t序列数：" + str(result['seq_num']))
-    #         seq_list = result['seq_list']
-    #         if self.check_type_flag:
-    #             for seq in seq_list:
-    #                 print("\t序号" + str(seq['seq_index']) + "， 序列名称：" + seq['seq_name'] + "， 长度：" + str(
-    #                     seq['seq_length']) + ', 类型：' + seq['virus_name'])
-    #         else:
-    #             for seq in seq_list:
-    #                 print(
-    #                     "\t序号" + str(seq['seq_index']) + "， 序列名称：" + seq['seq_name'] + "， 长度：" + str(seq['seq_length']))
-    #     if self.compare:
-    #         # self.show_compare(result_list)
-    #         print(self.print_compare(result_list))
-    #     return True
     def show_result(self, result_list):
         print(self.print_result(result_list))
 
-    # def save_result(self, result_list):
-    #     if not result_list or len(result_list) <= 0:
-    #         return False
-    #     with open(self.result_path + self.save_file, 'w', encoding=self.encoding) as file:
-    #         for result in result_list:
-    #             file.write("文件" + str(result['file_index']) + "：\n\t文件名：" + result['file_name'] + "\n")
-    #             file.write("\t序列数：" + str(result['seq_num']) + "\n")
-    #             seq_list = result['seq_list']
-    #             for seq in seq_list:
-    #                 if self.check_type_flag:
-    #                     file.write("\t序号" + str(seq['seq_index']) + "， 序列名称：" + seq['seq_name'] + "， 长度：" + str(
-    #                         seq['seq_length']) + ', 类型：' + seq['virus_name'] + "\n")
-    #                 else:
-    #                     file.write("\t序号" + str(seq['seq_index']) + "， 序列名称：" + seq['seq_name'] + "， 长度：" + str(
-    #                         seq['seq_length']) + "\n")
-    #     return True
     def save_result(self, result_list):
         result_info = self.print_result(result_list)
         with open(self.result_path + self.save_file, 'w', encoding=self.encoding) as file:

@@ -62,7 +62,74 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
     	病毒名3-长度
     ```
 
+## 配置文件说明
+
+配置文件为程序根目录下的`ini/setting.json`。
+
+您可以通过修改配置文件来控制SeqCounter的功能开关及其他行为。
+
+### 默认配置文件
+
+```json
+{
+    "version": "2.0.3",
+    "seqCounter": {
+        "encoding": "utf-8",
+        "inputOptions": {
+            "seqPath": "./seqs/",
+            "seqExtensionName":".txt",
+            "encoding": "utf-8",
+            "symbols": [">",">>"]
+        },
+        "outputOptions": {
+            "resultPath": "./results/",
+            "resultExtensionName": ".log",
+            "encoding": "utf-8",
+            "compare": true,
+            "combineCompare": false
+        },
+        "constraintOptions": {
+            "seqTypeList": "./ini/virusinfo.ini",
+            "seqTypeCheck": true
+        }
+    }
+}
+```
+
+### 含义说明
+
+```java
+{
+    "version": "2.0.3", // 版本号
+    "seqCounter": { // 序列统计模块配置
+        "encoding": "utf-8", // 编码格式
+        "inputOptions": { // 输入文件配置
+            "seqPath": "./seqs/", // 输入文件目录（必须为目录）
+            "seqExtensionName":".txt", // 输入文件拓展名
+            "encoding": "utf-8", // 输入文件编码
+            "symbols": [">",">>"] // 文件内序列分隔符
+        },
+        "outputOptions": { // 输出文件配置
+            "resultPath": "./results/", // 输出文件目录（必须为目录）
+            "resultExtensionName": ".log", // 输出文件拓展名
+            "encoding": "utf-8", // 输出文件编码
+            "compare": true, // 是否标识相同序列（true，是；false：否）
+            "combineCompare": false // 是否跨文件对比（true，是；false：否）
+        },
+        "constraintOptions": { // 约束文件配置
+            "seqTypeList": "./ini/virusinfo.ini", // 序列类型列表文件
+            "seqTypeCheck": true // 是否执行序列类型判断（true，是；false：否）
+        }
+    }
+}
+```
+
 ## 升级日志
+
+- 版本 2.1.0
+  - 支持标识相同序列；
+  - 修复配置文件开关无效的BUG；
+  - 重构结果打印方法。
 
 - 版本 2.0.2
   - 增加`--v`（查看版本号）命令；
@@ -79,3 +146,9 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 ## 许可协议
 
 见根目录下的[LICENSE](./LICENSE)(可使用文本文档打开)。
+
+
+
+SeqCounter开发团队
+
+2022年5月23日
