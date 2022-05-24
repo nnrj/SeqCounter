@@ -5,5 +5,5 @@ from SeqCounter import SeqCounter
 
 if __name__ == "__main__":
     seqCounter = SeqCounter()
-    seqCounter.getArgs(sys.argv[1:])
+    seqCounter.get_args(sys.argv[1:])
     seqCounter.run()

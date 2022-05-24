@@ -81,7 +81,7 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 ```json
 {
-    "version": "2.1.2",
+    "version": "2.1.3",
     "seqCounter": {
         "encoding": "utf-8",
         "inputOptions": {
@@ -114,7 +114,7 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 ```java
 {
-    "version": "2.1.2", // 版本号
+    "version": "2.1.3", // 版本号
     "seqCounter": { // 序列统计模块配置
         "encoding": "utf-8", // 编码格式
         "inputOptions": { // 输入文件配置

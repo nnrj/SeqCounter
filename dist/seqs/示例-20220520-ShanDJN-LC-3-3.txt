@@ -1,4 +1,4 @@
->20220520-ShanDJN-LC-3-1-CMV-CP
+>20220520-TEST-LC-3-1-CMV-CP
 1 aatacaaaca tacagaaaac aaacgaattc aagcaatcaa gcattcaagc gctcttttat
        61 tttacaaaat tttcaaagat tcttgctttc tccactcctt aagttctatt agttttcatc
       121 aatttcaatt gtagttcact ctcattccat cctacaaggg acgatggcag cacaagttat
@@ -29,7 +29,7 @@
      1621 aaaatcacac ataaacccat cgttgatgtg cgacaatcaa ttagatgcca atggtaactt
      1681 catatgggga aagcgcggat atcacgctaa gaggtttttc tcaaattact ttgagttaat
 
->20220520-ShanDJN-LC-3-1-BBWV2-CP
+>20220520-TEST-LC-3-1-BBWV2-CP
 1 gttttattta caagagcgta cggttcaacc cctgcctcct ctgtaaaact accctttgaa
        61 ttcttcttct cgacttttct tagtttaaaa ttcctatggc aacgtcctca ttcaacatca
       121 atgaactggt agcctcccac ggcgataaag gactacttgc gacagccctc gttgataaga
@@ -67,7 +67,7 @@
      2041 ctgggaggtg gatgcaccct gtgcctgagg gcgtggtata ctctgttggt tataatgaga
      2101 agggtcttgg tcctaaactt gatagtgagt tgtacatagt taatggtgat tgcgtgattt
 
->20220520-ShanDJN-LC-3-1-CHIVMV-CP
+>20220520-TEST-LC-3-1-CHIVMV-CP
 1 ctcaatacaa cataagaaaa tcaacgcaaa aacactcaca aaagctttca actctaattc
        61 aaacaatttg ttaagtttca atttcgatct tcatcaaaca aactctttca atttcagtgt
       121 aagctatcgt aattcagtaa gttatttcaa actctcgtaa attgcagaag atcatccatg
@@ -88,7 +88,7 @@
      1021 gttcagttct caagcgctga aagcttttgg aagggattgg acggcaattg ggcacaaatg
      1081 agatatccta cagatcatac atgtgtggca ggcttaccag ttgaagactg tggcagagtt
 
->20220520-ShanDJN-LC-3-1-PVY-CP
+>20220520-TEST-LC-3-1-PVY-CP
 1 aattaaaaca actcaataca acataagaaa aacaacgcaa aaacactcat aaacgctcat
        61 tctcactcaa gcaacttgct aagtttcagt ttaaatcatt tccttgcaat tctctagaac
       121 aatattggaa accatttcaa ctcaacaagc aatttcatca cttccaacca atttcagatc

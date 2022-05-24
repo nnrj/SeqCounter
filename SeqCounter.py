@@ -3,11 +3,11 @@ import re
 import time
 import sys
 import getopt
-from string import digits
 from util.Util import Util
 from hashlib import md5
 
 
+# SeqCounter
 class SeqCounter:
     def __init__(self):
         self.setting_json = Util.load_setting()
@@ -32,6 +32,7 @@ class SeqCounter:
         self.remove_symbol_list = self.setting_json['seqCounter']['outputOptions']['removeSymbols']
         self.constraint_remove_symbol_list = self.setting_json['seqCounter']['constraintOptions']['removeSymbols']
 
+    # 读取输入文件列表
     def read_path(self):
         if not os.path.isdir(self.seq_path):
             print("错误：指定源文件参数不是目录。")
@@ -57,6 +58,7 @@ class SeqCounter:
             return False
         return file_name_list
 
+    # 读取约束文件列表
     def read_virusinfo(self):
         if not os.path.exists(self.seq_type_file_path):
             print("警告：类型约束文件不存在，将跳过类型判断。")
@@ -66,7 +68,6 @@ class SeqCounter:
             if not content or len(content) <= 0:
                 print("警告：类型约束文件内容为空，将跳过类型判断。")
                 return False
-            # virus_info_str = content.replace(' ', '').replace('\n', '').replace('\t', '')
             virus_info_str = Util.remove_char(content, self.constraint_remove_symbol_list)
             if not virus_info_str or len(virus_info_str) <= 0:
                 print("警告：类型约束文件内容为空，将跳过类型判断。")
@@ -86,8 +87,7 @@ class SeqCounter:
                 if not virus_infos or len(virus_infos) != 2:
                     print("警告：第[" + str(index) + '行参数不合法，已忽略。')
                     continue
-                item = {}
-                item['virus_name'] = virus_infos[0]
+                item = {'virus_name': virus_infos[0]}
                 virus_lens = virus_infos[1].split('/')
                 if not virus_lens or len(virus_infos) <= 0:
                     print("警告：第[" + str(index) + '行参数，病毒长度不合法，已忽略。')
@@ -96,6 +96,7 @@ class SeqCounter:
                 virus_info_list.append(item)
             return virus_info_list
 
+    # 判断序列类型
     def check_seq_type(self, length):
         if not self.virus_info_list or len(self.virus_info_list) <= 0:
             return '未知'
@@ -104,6 +105,7 @@ class SeqCounter:
                 return virus_info['virus_name']
         return '未知'
 
+    # 分割多个序列
     def split_content(self, content):
         symbols = ">"
         if len(self.split_symbol_list) > 0:
@@ -113,6 +115,7 @@ class SeqCounter:
         reg = "[" + symbols + "]"
         return re.split(reg, content)
 
+    # 统计序列信息
     def statistics(self):
         file_name_list = self.read_path()
         if not file_name_list:
@@ -131,13 +134,11 @@ class SeqCounter:
                 print("\t警告：源文件[" + full_path + "]不存在。直接跳过。")
                 continue
             item = {'file_index': file_index, 'file_name': file_name}
-            # seq_str_list = []
             with open(full_path, 'r', encoding=self.encoding) as file:
                 content = file.read()
                 if not content or len(content) <= 0:
                     print("\t警告：源文件[" + full_path + "]内容为空。直接跳过。")
                     continue
-                # seq_str_list = content.split('>')
                 seq_str_list = self.split_content(content)
                 if len(seq_str_list) <= 0:
                     print("\t警告：源文件[" + full_path + "]中不存在任何序列。直接跳过。")
@@ -157,9 +158,6 @@ class SeqCounter:
                 seq_item = {}
                 seq_name = seq_name_list[0]
                 seq_body = seq_str[len(seq_name):]
-                # seq_body = seq_str[len(seq_name):].replace(' ', '').replace('\n', '')
-                # table = seq_body.maketrans('', '', digits)
-                # seq_body = seq_body.translate(table)
                 seq_body = Util.remove_char(seq_body, self.remove_symbol_list)
                 seq_body = seq_body.upper()
                 seq_item['seq_index'] = seq_index
@@ -189,6 +187,7 @@ class SeqCounter:
                 line_seq_list.append(seq)
         return line_seq_list
 
+    # 比较序列
     def compare_seq_body(self, line_seq_list):
         if not line_seq_list or len(line_seq_list) <= 0:
             return False
@@ -204,6 +203,7 @@ class SeqCounter:
                 same_body_map[finger] = [seq]
         return same_body_map
 
+    # 打印序列比较结果，输出相同序列信息
     def print_compare(self, result_list):
         compare_info = ""
         have_same_flag = False
@@ -268,6 +268,7 @@ class SeqCounter:
             compare_info += "无。" + "\n"
         return compare_info
 
+    # 提取序列
     def extract_seqs(self, result_list):
         if not result_list or len(result_list) <= 0:
             return False
@@ -280,16 +281,17 @@ class SeqCounter:
                 if not seq_list or len(seq_list) <= 0:
                     continue
                 name = Util.get_file_name(result['file_name']) + self.extract_extension_name
-                # print("去掉拓展名的名字：" + name)
                 with open(seqs_extract_path + name, 'w', encoding=self.encoding) as file:
                     for seq in seq_list:
                         if not seq or not ('seq_name' in seq) or len(seq['seq_name']) <= 0 or not ('seq_body' in seq) or len(seq['seq_body']) <= 0:
                             continue
                         file.write(">" + seq['seq_name'] + "\n" + seq['seq_body'] + "\n")
         else:
+            # 单文件（每个序列一个文件）输出，待实现
             return False
         return True
 
+    # 输出序列信息统计结果
     def print_result(self, result_list):
         result_info = ""
         if not result_list or len(result_list) <= 0:
@@ -311,9 +313,11 @@ class SeqCounter:
             result_info += self.print_compare(result_list)
         return result_info
 
+    # 在控制台打印结果
     def show_result(self, result_list):
         print(self.print_result(result_list))
 
+    # 保存结果到文件
     def save_result(self, result_list):
         result_info = self.print_result(result_list)
         with open(self.result_path + self.save_file, 'w', encoding=self.encoding) as file:
@@ -332,7 +336,8 @@ class SeqCounter:
         print("请使用任意文本编辑器打开查看。")
         print("-" * 50)
 
-    def getArgs(self, argv):
+    # 控制台传参
+    def get_args(self, argv):
         input_path = self.seq_path
         output_path = self.result_path
         check_path = self.seq_type_file_path
@@ -377,5 +382,5 @@ class SeqCounter:
 # 运行
 if __name__ == '__main__':
     seqCounter = SeqCounter()
-    seqCounter.getArgs(sys.argv[1:])
+    seqCounter.get_args(sys.argv[1:])
     seqCounter.run()
