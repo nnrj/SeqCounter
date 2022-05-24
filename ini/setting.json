@@ -1,5 +1,5 @@
 {
-    "version": "2.0.3",
+    "version": "2.1.2",
     "seqCounter": {
         "encoding": "utf-8",
         "inputOptions": {
@@ -13,11 +13,16 @@
             "resultExtensionName": ".log",
             "encoding": "utf-8",
             "compare": true,
-            "combineCompare": false
+            "combineCompare": false,
+            "extractSeq": true,
+            "singleExtract": false,
+            "extractExtensionName": ".fasta",
+            "removeSymbols": [" ", "\n", "\t", "@num", " "]
         },
         "constraintOptions": {
             "seqTypeList": "./ini/virusinfo.ini",
-            "seqTypeCheck": true
+            "seqTypeCheck": true,
+            "removeSymbols": [" ", "\n", "\t"]
         }
     }
 }

@@ -16,14 +16,21 @@ class SeqCounter:
         self.seq_path = self.setting_json['seqCounter']['inputOptions']['seqPath']
         self.result_path = self.setting_json['seqCounter']['outputOptions']['resultPath']
         self.time_str = str(time.strftime('%Y%m%d%H%M%S', time.localtime()))
-        self.save_file = 'result' + self.time_str + self.setting_json['seqCounter']['outputOptions'][
-            'resultExtensionName']
+        self.seq_extension_name = self.setting_json['seqCounter']['inputOptions']['seqExtensionName']
+        self.result_extension_name = self.setting_json['seqCounter']['outputOptions']['resultExtensionName']
+        self.extract_extension_name = self.setting_json['seqCounter']['outputOptions']['extractExtensionName']
+        self.save_file = 'result' + self.time_str + self.result_extension_name
         self.seq_type_file_path = self.setting_json['seqCounter']['constraintOptions']['seqTypeList']
         self.virus_info_list = []
         self.check_type_flag = bool(self.setting_json['seqCounter']['constraintOptions']['seqTypeCheck'])
         self.split_symbol_list = self.setting_json['seqCounter']['inputOptions']['symbols']
         self.compare = bool(self.setting_json['seqCounter']['outputOptions']['compare'])
         self.combine_compare = bool(self.setting_json['seqCounter']['outputOptions']['combineCompare'])
+        self.extract_seq_flag = bool(self.setting_json['seqCounter']['outputOptions']['extractSeq'])
+        self.single_extract = bool(self.setting_json['seqCounter']['outputOptions']['singleExtract'])
+        self.extract_extension_name = self.setting_json['seqCounter']['outputOptions']['extractExtensionName']
+        self.remove_symbol_list = self.setting_json['seqCounter']['outputOptions']['removeSymbols']
+        self.constraint_remove_symbol_list = self.setting_json['seqCounter']['constraintOptions']['removeSymbols']
 
     def read_path(self):
         if not os.path.isdir(self.seq_path):
@@ -42,7 +49,7 @@ class SeqCounter:
             if len(ex_name_list) <= 0:
                 continue
             ex_name = re.findall(r'\.[^.\\/:*?"<>|\r\n]+$', file_name)[0]
-            if ex_name != '.txt':
+            if ex_name != self.seq_extension_name:
                 continue
             file_name_list.append(file_name)
         if len(file_name_list) <= 0:
@@ -59,7 +66,8 @@ class SeqCounter:
             if not content or len(content) <= 0:
                 print("警告：类型约束文件内容为空，将跳过类型判断。")
                 return False
-            virus_info_str = content.replace(' ', '').replace('\n', '').replace('\t', '')
+            # virus_info_str = content.replace(' ', '').replace('\n', '').replace('\t', '')
+            virus_info_str = Util.remove_char(content, self.constraint_remove_symbol_list)
             if not virus_info_str or len(virus_info_str) <= 0:
                 print("警告：类型约束文件内容为空，将跳过类型判断。")
                 return False
@@ -148,9 +156,11 @@ class SeqCounter:
                     continue
                 seq_item = {}
                 seq_name = seq_name_list[0]
-                seq_body = seq_str[len(seq_name):].replace(' ', '').replace('\n', '')
-                table = seq_body.maketrans('', '', digits)
-                seq_body = seq_body.translate(table)
+                seq_body = seq_str[len(seq_name):]
+                # seq_body = seq_str[len(seq_name):].replace(' ', '').replace('\n', '')
+                # table = seq_body.maketrans('', '', digits)
+                # seq_body = seq_body.translate(table)
+                seq_body = Util.remove_char(seq_body, self.remove_symbol_list)
                 seq_body = seq_body.upper()
                 seq_item['seq_index'] = seq_index
                 seq_item['seq_name'] = seq_name
@@ -216,7 +226,8 @@ class SeqCounter:
                 same_seq_list = same_body_map[key]
                 if len(same_seq_list) > 1:
                     if self.check_type_flag:
-                        compare_info += "所在文件：" + same_seq_list[0]['file_name'] + "， 序列类型：" + same_seq_list[0]['virus_name'] + "\n"
+                        compare_info += "所在文件：" + same_seq_list[0]['file_name'] + "， 序列类型：" + same_seq_list[0][
+                            'virus_name'] + "\n"
                     else:
                         compare_info += "所在文件：" + same_seq_list[0]['file_name'] + "\n"
                     same_seq_str = ""
@@ -257,6 +268,28 @@ class SeqCounter:
             compare_info += "无。" + "\n"
         return compare_info
 
+    def extract_seqs(self, result_list):
+        if not result_list or len(result_list) <= 0:
+            return False
+        seqs_extract_path = self.result_path + "/seqs_extract" + self.time_str + "/"
+        if not os.path.exists(seqs_extract_path):
+            os.mkdir(seqs_extract_path)
+        if not self.single_extract:
+            for result in result_list:
+                seq_list = result['seq_list']
+                if not seq_list or len(seq_list) <= 0:
+                    continue
+                name = Util.get_file_name(result['file_name']) + self.extract_extension_name
+                # print("去掉拓展名的名字：" + name)
+                with open(seqs_extract_path + name, 'w', encoding=self.encoding) as file:
+                    for seq in seq_list:
+                        if not seq or not ('seq_name' in seq) or len(seq['seq_name']) <= 0 or not ('seq_body' in seq) or len(seq['seq_body']) <= 0:
+                            continue
+                        file.write(">" + seq['seq_name'] + "\n" + seq['seq_body'] + "\n")
+        else:
+            return False
+        return True
+
     def print_result(self, result_list):
         result_info = ""
         if not result_list or len(result_list) <= 0:
@@ -272,7 +305,8 @@ class SeqCounter:
                         seq['seq_length']) + ', 类型：' + seq['virus_name'] + "\n"
             else:
                 for seq in seq_list:
-                    result_info += "\t序号" + str(seq['seq_index']) + "， 序列名称：" + seq['seq_name'] + "， 长度：" + str(seq['seq_length']) + "\n"
+                    result_info += "\t序号" + str(seq['seq_index']) + "， 序列名称：" + seq['seq_name'] + "， 长度：" + str(
+                        seq['seq_length']) + "\n"
         if self.compare:
             result_info += self.print_compare(result_list)
         return result_info
@@ -284,6 +318,8 @@ class SeqCounter:
         result_info = self.print_result(result_list)
         with open(self.result_path + self.save_file, 'w', encoding=self.encoding) as file:
             file.write(result_info)
+        if self.extract_seq_flag:
+            self.extract_seqs(result_list)
 
     # 入口函数
     def run(self):

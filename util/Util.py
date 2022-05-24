@@ -4,6 +4,7 @@
 # @Author  : name
 # @File    : Util.py
 import json
+from string import digits
 from util import TimeUtil
 
 
@@ -21,8 +22,34 @@ class Util:
     @staticmethod
     def load_setting():
         setting_path = "ini/setting.json"
-        with open(setting_path, 'r') as setting_file:
+        with open(setting_path, 'r', encoding='utf-8') as setting_file:
             return json.load(setting_file)
+
+    # 提取文件名
+    @staticmethod
+    def get_file_name(full_name):
+        return full_name.split('\\').pop().split('/').pop().rsplit('.', 1)[0]
+
+    # 移除字符串中的指定字符
+    @staticmethod
+    def remove_char(content, char_list):
+        if not content or len(content) <= 0 or not char_list or len(char_list) <= 0:
+            return content
+        for char in char_list:
+            if char == '@num':
+                content = Util.remove_num(content)
+                continue
+            if len(char) > 2 and '@@' == char[0:2]:
+                char = char[1:]
+            content = content.replace(char, '')
+        return content
+
+    @staticmethod
+    def remove_num(content):
+        if not content or len(content) <= 0:
+            return content
+        table = content.maketrans('', '', digits)
+        return content.translate(table)
 
     # 获取任务执行时间间隔
     # timer_id : 要读取的定时器之ID（zhihu：知乎，weibo：微博）

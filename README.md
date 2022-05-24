@@ -8,8 +8,6 @@ SeqCounter是一个DNA序列分析器。
 
 GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
-开发者：天河何处
-
 ## 使用说明
 
 ### 运行
@@ -34,6 +32,17 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 - 输入文件
   - 输入文件为序列文本，默认为`.txt`格式；
   - 所有输入文件应当放在默认或参数指定的输入文件路径下。
+  
+  > 本程序根目录下的`tools`文件夹中提供了两个批处理工具：
+  >
+  > `fastaToTxt.bat`：将`.fasta`格式的文件批量转换为`.txt`；
+  >
+  > `txtToFasta.bat`：将`.txt`格式的文件批量转换为`.fasta`。
+  >
+  > 使用方法：
+  >
+  > 将需要转换的文件放入同一个文件夹，复制相应的`xxx.bat`文件到该文件夹，运行`xxx.bat`即可。
+  
 - 输出文件
   - 输出文件为普通文本或Excel文件，默认为`.log`格式的普通文本文件；
   - 输出文件中保存了检测结果；
@@ -72,7 +81,7 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 ```json
 {
-    "version": "2.0.3",
+    "version": "2.1.2",
     "seqCounter": {
         "encoding": "utf-8",
         "inputOptions": {
@@ -86,11 +95,16 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
             "resultExtensionName": ".log",
             "encoding": "utf-8",
             "compare": true,
-            "combineCompare": false
+            "combineCompare": false,
+            "extractSeq": true,
+            "singleExtract": false,
+            "extractExtensionName": ".fasta",
+            "removeSymbols": [" ", "\n", "\t", "@num", " "]
         },
         "constraintOptions": {
             "seqTypeList": "./ini/virusinfo.ini",
-            "seqTypeCheck": true
+            "seqTypeCheck": true,
+            "removeSymbols": [" ", "\n", "\t"]
         }
     }
 }
@@ -100,7 +114,7 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 ```java
 {
-    "version": "2.0.3", // 版本号
+    "version": "2.1.2", // 版本号
     "seqCounter": { // 序列统计模块配置
         "encoding": "utf-8", // 编码格式
         "inputOptions": { // 输入文件配置
@@ -114,7 +128,11 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
             "resultExtensionName": ".log", // 输出文件拓展名
             "encoding": "utf-8", // 输出文件编码
             "compare": true, // 是否标识相同序列（true，是；false：否）
-            "combineCompare": false // 是否跨文件对比（true，是；false：否）
+            "combineCompare": false, // 是否跨文件对比（true，是；false：否）
+            "extractSeq": true, // 是否提取序列（true，是；false：否）
+            "singleExtract": false, // 是否单独提取（true，是；false：否）
+            "extractExtensionName": ".fasta", // 提取序列的拓展名
+            "removeSymbols": [" ", "\n", "\t", "@num", " "] // 提取序列时要移除的字符
         },
         "constraintOptions": { // 约束文件配置
             "seqTypeList": "./ini/virusinfo.ini", // 序列类型列表文件
@@ -124,13 +142,35 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 }
 ```
 
+- removeSymbols：提取序列时要移除的字符
+
+  - 值为一个字符串数组；
+
+  - 数组内容为要从序列中移除的所有字符或字符串；
+
+  - 支持python的转义字符；
+
+  - 支持批处理操作，格式为`@批处理名称`，目前支持的批处理如下：
+
+    - 移除所有数字：`@num`
+
+    > 若要移除的字符串恰好是批处理操作符，可使用`@`符转义。
+    >
+    > 例如，要移除`@num`，可在列表中指定`@@num`。
+
 ## 升级日志
 
+- 版本 2.1.3
+  - 序列提取时，支持自定义要去除的字符或字符串。
+
+- 版本 2.1.2
+  - 修复自定义输入文件名无法识别的BUG。
+- 版本 2.1.1
+  - 支持提取序列。
 - 版本 2.1.0
   - 支持标识相同序列；
   - 修复配置文件开关无效的BUG；
   - 重构结果打印方法。
-
 - 版本 2.0.2
   - 增加`--v`（查看版本号）命令；
   - 增加`--h`（查看帮助信息）命令。
@@ -147,8 +187,12 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 见根目录下的[LICENSE](./LICENSE)(可使用文本文档打开)。
 
+## 开发团队
+
+天河何处、木落
+
 
 
 SeqCounter开发团队
 
-2022年5月23日
+2022年5月24日

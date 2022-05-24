@@ -1,10 +1,10 @@
 {
-    "version": "2.0.3",
+    "version": "2.1.2",
     "seqCounter": {
         "encoding": "utf-8",
         "inputOptions": {
             "seqPath": "./seqs/",
-            "seqExtensionName":".txt",
+            "seqExtensionName":".fasta",
             "encoding": "utf-8",
             "symbols": [">",">>"]
         },
@@ -13,7 +13,10 @@
             "resultExtensionName": ".log",
             "encoding": "utf-8",
             "compare": true,
-            "combineCompare": false
+            "combineCompare": false,
+            "extractSeq": true,
+            "singleExtract": false,
+            "extractExtensionName": ".fasta"
         },
         "constraintOptions": {
             "seqTypeList": "./ini/virusinfo.ini",
