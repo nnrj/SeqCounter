@@ -81,7 +81,7 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 ```json
 {
-    "version": "2.1.3",
+    "version": "2.1.5",
     "seqCounter": {
         "encoding": "utf-8",
         "inputOptions": {
@@ -99,7 +99,8 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
             "extractSeq": true,
             "singleExtract": false,
             "extractExtensionName": ".fasta",
-            "removeSymbols": [" ", "\n", "\t", "@num", " "]
+            "removeSymbols": [" ", "\n", "\t", "@num", " "],
+            "ignoreEmptySeq": true
         },
         "constraintOptions": {
             "seqTypeList": "./ini/virusinfo.ini",
@@ -114,7 +115,7 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 ```java
 {
-    "version": "2.1.3", // 版本号
+    "version": "2.1.5", // 版本号
     "seqCounter": { // 序列统计模块配置
         "encoding": "utf-8", // 编码格式
         "inputOptions": { // 输入文件配置
@@ -132,7 +133,8 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
             "extractSeq": true, // 是否提取序列（true，是；false：否）
             "singleExtract": false, // 是否单独提取（true，是；false：否）
             "extractExtensionName": ".fasta", // 提取序列的拓展名
-            "removeSymbols": [" ", "\n", "\t", "@num", " "] // 提取序列时要移除的字符
+            "removeSymbols": [" ", "\n", "\t", "@num", " "], // 提取序列时要移除的字符
+            "ignoreEmptySeq": true // 标识相同序列时，忽略空序列（true，是；false：否）
         },
         "constraintOptions": { // 约束文件配置
             "seqTypeList": "./ini/virusinfo.ini", // 序列类型列表文件
@@ -160,6 +162,11 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 ## 升级日志
 
+- 版本 2.1.5
+  - 标识相同序列时，允许跳过空序列；
+
+  - 修复类型判断选项配置不起作用的BUG。
+  
 - 版本 2.1.3
   - 序列提取时，支持自定义要去除的字符或字符串。
 
@@ -195,4 +202,4 @@ GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
 SeqCounter开发团队
 
-2022年5月24日
+2022年5月28日

@@ -1,5 +1,5 @@
 {
-    "version": "2.1.3",
+    "version": "2.1.5",
     "seqCounter": {
         "encoding": "utf-8",
         "inputOptions": {
@@ -17,7 +17,8 @@
             "extractSeq": true,
             "singleExtract": false,
             "extractExtensionName": ".fasta",
-            "removeSymbols": [" ", "\n", "\t", "@num", " "]
+            "removeSymbols": [" ", "\n", "\t", "@num", " "],
+            "ignoreEmptySeq": true
         },
         "constraintOptions": {
             "seqTypeList": "./ini/virusinfo.ini",

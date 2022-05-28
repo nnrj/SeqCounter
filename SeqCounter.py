@@ -31,6 +31,7 @@ class SeqCounter:
         self.extract_extension_name = self.setting_json['seqCounter']['outputOptions']['extractExtensionName']
         self.remove_symbol_list = self.setting_json['seqCounter']['outputOptions']['removeSymbols']
         self.constraint_remove_symbol_list = self.setting_json['seqCounter']['constraintOptions']['removeSymbols']
+        self.ignore_empty_seq_flag = bool(self.setting_json['seqCounter']['outputOptions']['ignoreEmptySeq'])
 
     # 读取输入文件列表
     def read_path(self):
@@ -81,16 +82,16 @@ class SeqCounter:
             for pre_virus_info in pre_virus_info_list:
                 index += 1
                 if not pre_virus_info or len(pre_virus_info) <= 0:
-                    print("警告：第[" + str(index) + '行参数不合法，已忽略。')
+                    print("警告：第[" + str(index) + ']行参数不合法，已忽略。')
                     continue
                 virus_infos = pre_virus_info.split('-')
                 if not virus_infos or len(virus_infos) != 2:
-                    print("警告：第[" + str(index) + '行参数不合法，已忽略。')
+                    print("警告：第[" + str(index) + ']行参数不合法，已忽略。')
                     continue
                 item = {'virus_name': virus_infos[0]}
                 virus_lens = virus_infos[1].split('/')
                 if not virus_lens or len(virus_infos) <= 0:
-                    print("警告：第[" + str(index) + '行参数，病毒长度不合法，已忽略。')
+                    print("警告：第[" + str(index) + ']行参数，病毒长度不合法，已忽略。')
                     continue
                 item['virus_lens'] = virus_lens
                 virus_info_list.append(item)
@@ -121,7 +122,7 @@ class SeqCounter:
         if not file_name_list:
             print("错误：读取源文件列表失败。")
             return False
-        self.check_type_flag = True
+        # self.check_type_flag = True
         self.virus_info_list = self.read_virusinfo()
         if not self.virus_info_list or len(self.virus_info_list) <= 0:
             self.check_type_flag = False
@@ -225,6 +226,8 @@ class SeqCounter:
             for key in same_body_map:
                 same_seq_list = same_body_map[key]
                 if len(same_seq_list) > 1:
+                    if self.ignore_empty_seq_flag and len(same_seq_list[0]['seq_body']) <= 0:
+                        continue
                     if self.check_type_flag:
                         compare_info += "所在文件：" + same_seq_list[0]['file_name'] + "， 序列类型：" + same_seq_list[0][
                             'virus_name'] + "\n"
@@ -250,6 +253,8 @@ class SeqCounter:
                 for key in same_body_map:
                     same_seq_list = same_body_map[key]
                     if len(same_seq_list) > 1:
+                        if self.ignore_empty_seq_flag and len(same_seq_list[0]['seq_body']) <= 0:
+                            continue
                         if not have_same_flag:
                             have_same_flag = True
                         compare_info += "所在文件：" + result['file_name'] + "\n"
@@ -283,12 +288,26 @@ class SeqCounter:
                 name = Util.get_file_name(result['file_name']) + self.extract_extension_name
                 with open(seqs_extract_path + name, 'w', encoding=self.encoding) as file:
                     for seq in seq_list:
+                        # if self.ignore_empty_seq_flag and len(seq['seq_body']) <= 0:
+                        #     continue
                         if not seq or not ('seq_name' in seq) or len(seq['seq_name']) <= 0 or not ('seq_body' in seq) or len(seq['seq_body']) <= 0:
                             continue
                         file.write(">" + seq['seq_name'] + "\n" + seq['seq_body'] + "\n")
         else:
             # 单文件（每个序列一个文件）输出，待实现
-            return False
+            # for result in result_list:
+            combine_line_seq_list = self.combine_result(result_list)
+            if not combine_line_seq_list or len(combine_line_seq_list) <= 0:
+                return False
+            for seq in combine_line_seq_list:
+                if not seq or not ('seq_name' in seq) or len(seq['seq_name']) <= 0 or not ('seq_body' in seq) or len(seq['seq_body']) <= 0:
+                    continue
+                # if self.ignore_empty_seq_flag and len(seq['seq_body']) <= 0:
+                #     continue
+                name = Util.get_file_name(seq['file_name']) + "_" + seq['seq_name'].replace("\\", "#").replace("/", "#") + self.extract_extension_name
+                with open(seqs_extract_path + name, 'w', encoding=self.encoding) as file:
+                    file.write(">" + seq['seq_name'] + "\n" + seq['seq_body'] + "\n")
+            # return False
         return True
 
     # 输出序列信息统计结果
@@ -319,6 +338,8 @@ class SeqCounter:
 
     # 保存结果到文件
     def save_result(self, result_list):
+        if not os.path.exists(self.result_path):
+            print("结果保存失败：指定的结果保存目录不存在！")
         result_info = self.print_result(result_list)
         with open(self.result_path + self.save_file, 'w', encoding=self.encoding) as file:
             file.write(result_info)
@@ -369,7 +390,7 @@ class SeqCounter:
                 print("\t[-h] 查看帮助信息\n")
 
                 print("本项目以GPL3.0协议开源：https://github.com/nnrj/SeqCounter")
-                print("开发者：天河何处")
+                print("开发团队成员：天河何处")
                 sys.exit(0)
         self.seq_path = input_path
         self.result_path = output_path
