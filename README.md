@@ -3,6 +3,7 @@
 ## 关于
 
 SeqCounter is a DNA sequence analyzer.
+
 SeqCounter是一个DNA序列分析器。
 
 本项目以[GPL3.0](./LICENSE)协议开源，请务必遵守。
