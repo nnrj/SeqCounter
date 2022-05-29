@@ -8,6 +8,8 @@ SeqCounter是一个DNA序列分析器。
 
 GitHub仓库地址：https://github.com/nnrj/SeqCounter
 
+SeqCounterX是SeqCounter的GUI版本，仓库地址：https://github.com/nnrj/SeqCounterX
+
 ## 使用说明
 
 ### 运行
