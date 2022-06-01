@@ -120,7 +120,7 @@ SeqCounterX是SeqCounter的GUI版本，仓库地址：https://github.com/nnrj/Se
 
 ```java
 {
-    "version": "2.1.5", // 版本号
+    "version": "2.1.6", // 版本号
     "seqCounter": { // 序列统计模块配置
         "encoding": "utf-8", // 编码格式
         "inputOptions": { // 输入文件配置
