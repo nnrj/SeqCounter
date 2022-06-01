@@ -5,6 +5,8 @@ import sys
 import getopt
 from util.Util import Util
 from hashlib import md5
+import openpyxl
+from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
 
 
 # SeqCounter
@@ -154,7 +156,8 @@ class SeqCounter:
                 seq_name_pattern = re.compile(seq_name_reg, re.S)
                 seq_name_list = seq_name_pattern.findall(seq_str)
                 if len(seq_name_list) <= 0:
-                    print("警告：第" + str(seq_index) + "个序列解析失败：序列名称不存在。")
+                    # print("警告：第" + str(seq_index) + "个序列解析失败：序列名称不存在。")
+                    print("警告：第" + str(file_index) + "个文件[" + file_name + "] 的 第" + str(seq_index) + "个序列解析失败：序列名称不存在。")
                     continue
                 seq_item = {}
                 seq_name = seq_name_list[0]
@@ -273,6 +276,368 @@ class SeqCounter:
             compare_info += "无。" + "\n"
         return compare_info
 
+    # # 统计序列相似度并输出表格
+    # # 相似性=(序列长度-不同的长度)/序列长度
+    # # 如果A≠B，那么以短的为准，相似性=(短序列长度-不同序列长度)/短序列长度
+    # def similarity_seq_body(self, result_list):
+    #     if not result_list or len(result_list) <= 0:
+    #         return False
+    #     similar_matrix = []
+    #     for y in result_list:
+    #         sub_similar = []
+    #         if not y or len(y) <=0 or not y['seq_list'] or len(y['seq_list'] <= 0):
+    #             for x in result_list:
+    #
+    #             continue
+    #         seq_list = y['seq_list']
+    #         similar_num = 0
+    #
+    #         for x in result_list:
+    # # 统计序列相似度并输出表格
+    # # 相似性=(序列长度-不同的长度)/序列长度
+    # # 如果A≠B，那么以短的为准，相似性=(短序列长度-不同序列长度)/短序列长度
+    # def similarity_seq_body(self, result_list):
+    #     if not result_list or len(result_list) <= 0:
+    #         return False
+    #     similar_matrix = []
+    #     for y in range(0,len(result_list) - 1):
+    #         similar_matrix[y] = []
+    #         result = result_list[y]
+    #         result['compared'] = []
+    #         if not result or len(result) <= 0 or not result['seq_list'] or len(result['seq_list'] <= 0):
+    #             for x in range(len(result_list)):
+    #                 # similar_matrix[y].append(0)
+    #                 similar_matrix[y][x] = 0
+    #                 result['compared'].append(result_list[x])
+    #                 if not result_list[x]['compared']:
+    #                     result_list[x]['compared']  = [result]
+    #                 else:
+    #                     result_list[x]['compared'].append(result)
+    #                 continue
+    #         seq_list = result['seq_list']
+    #         for x in range(len(result_list)):
+    #             similar_num = 0
+    #             if not result_list[x]['compared']:
+    #                 result_list[x]['compared'] = []
+    #             else:
+    #                 if result in result_list[x]['compared']:
+    #                     continue
+    #             for seq in result_list[x]['seq_list']:
+    #                 if seq in seq_list:
+    #                     similar_num += 1
+    #             result['compared'].append(result_list[x])
+    #             result_list[x]['compared'].append(result)
+    #             if len(seq_list) >= len(result_list[x]['seq_list']):
+    #                 similar_matrix[y][x] = similar_num / len(seq_list)
+    #             else:
+    #                 similar_matrix[y][x] = similar_num / len(result_list[x]['seq_list'])
+    #     print(similar_matrix)
+    #     return similar_matrix
+    # # 统计序列相似度并输出表格
+    # # 相似性=(序列长度-不同的长度)/序列长度
+    # # 如果A≠B，那么以短的为准，相似性=(短序列长度-不同序列长度)/短序列长度
+    # def similarity_seq_body(self, result_list):
+    #     if not result_list or len(result_list) <= 0:
+    #         return False
+    #     similar_matrix = [len(result_list)] * len(result_list)
+    #     for y in range(0, len(result_list) - 1):
+    #         # similar_matrix[y] = [len(result_list)]
+    #         result = result_list[y]
+    #         result['compared'] = []
+    #         if not result or len(result) <= 0 or 'seq_list' in result or len(result['seq_list'] <= 0):
+    #             sub_matrix = []
+    #             for x in range(len(result_list)):
+    #                 # similar_matrix[y].append(0)
+    #                 # similar_matrix[y][x] = 0
+    #                 sub_matrix.append(0)
+    #                 result['compared'].append(result_list[x])
+    #                 # if not result_list[x]['compared']:
+    #                 if 'compared' in result_list[x]:
+    #                     result_list[x]['compared'].append(result)
+    #                 else:
+    #                     result_list[x]['compared'] = [result]
+    #             result[y] = sub_matrix
+    #             continue
+    #         seq_list = result['seq_list']
+    #         for x in range(len(result_list)):
+    #             sub_matrix = []
+    #             similar_num = 0
+    #             if not 'compared' in result_list[x]:
+    #                 result_list[x]['compared'] = []
+    #             if result in result_list[x]['compared']:
+    #                 continue
+    #             for seq in result_list[x]['seq_list']:
+    #                 if seq in seq_list:
+    #                     similar_num += 1
+    #             result['compared'].append(result_list[x])
+    #             result_list[x]['compared'].append(result)
+    #             if len(seq_list) >= len(result_list[x]['seq_list']):
+    #                 # similar_matrix[y][x] = similar_num / len(seq_list)
+    #                 sub_matrix.append(similar_num / len(seq_list))
+    #             else:
+    #                 # similar_matrix[y][x] = similar_num / len(result_list[x]['seq_list'])
+    #                 sub_matrix.append(similar_num / len(result_list[x]['seq_list']))
+    #             similar_matrix[y] = sub_matrix
+    #     print(similar_matrix)
+    #     return similar_matrix
+    # # 统计序列相似度并输出表格
+    # # 相似性=(序列长度-不同的长度)/序列长度
+    # # 如果A≠B，那么以短的为准，相似性=(短序列长度-不同序列长度)/短序列长度
+    # def similarity_seq_body(self, result_list):
+    #     if not result_list or len(result_list) <= 0:
+    #         return False
+    #     similar_matrix = [len(result_list)] * len(result_list)
+    #     for y in range(0, len(result_list) - 1):
+    #         # similar_matrix[y] = [len(result_list)]
+    #         result = result_list[y]
+    #         result['compared'] = []
+    #         if not result or len(result) <= 0 or 'seq_list' in result or len(result['seq_list'] <= 0):
+    #             sub_matrix = []
+    #             for x in range(len(result_list)):
+    #                 # similar_matrix[y].append(0)
+    #                 # similar_matrix[y][x] = 0
+    #                 sub_matrix.append(0)
+    #                 result['compared'].append(result_list[x])
+    #                 # if not result_list[x]['compared']:
+    #                 if 'compared' in result_list[x]:
+    #                     result_list[x]['compared'].append(result)
+    #                 else:
+    #                     result_list[x]['compared'] = [result]
+    #             result[y] = sub_matrix
+    #             continue
+    #         seq_list = result['seq_list']
+    #         for x in range(len(result_list)):
+    #             sub_matrix = []
+    #             similar_num = 0
+    #             if not 'compared' in result_list[x]:
+    #                 result_list[x]['compared'] = []
+    #             if result in result_list[x]['compared']:
+    #                 continue
+    #             for seq in result_list[x]['seq_list']:
+    #                 if seq in seq_list:
+    #                     similar_num += 1
+    #             result['compared'].append(result_list[x])
+    #             result_list[x]['compared'].append(result)
+    #             if len(seq_list) >= len(result_list[x]['seq_list']):
+    #                 # similar_matrix[y][x] = similar_num / len(seq_list)
+    #                 sub_matrix.append(similar_num / len(seq_list))
+    #             else:
+    #                 # similar_matrix[y][x] = similar_num / len(result_list[x]['seq_list'])
+    #                 sub_matrix.append(similar_num / len(result_list[x]['seq_list']))
+    #             similar_matrix[y] = sub_matrix
+    #     print(similar_matrix)
+    #     return similar_matrix
+    # # 统计序列相似度并输出表格
+    # # 相似性=(序列长度-不同的长度)/序列长度
+    # # 如果A≠B，那么以短的为准，相似性=(短序列长度-不同序列长度)/短序列长度
+    # def similarity_seq_body(self, result_list):
+    #     print(result_list)
+    #     if not result_list or len(result_list) <= 0:
+    #         return False
+    #     # similar_matrix = [len(result_list)] * len(result_list)
+    #     similar_matrix = []
+    #     for y in range(0, len(result_list)):
+    #         # similar_matrix[y] = [len(result_list)]
+    #         result = result_list[y]
+    #         result['compared'] = []
+    #         sub_matrix = []
+    #         if not result or not 'seq_list' in result or len(result['seq_list']) <= 0:
+    #             for x in range(len(result_list)):
+    #                 # similar_matrix[y].append(0)
+    #                 # similar_matrix[y][x] = 0
+    #                 sub_matrix.append(0)
+    #                 result['compared'].append(result_list[x])
+    #                 # if not result_list[x]['compared']:
+    #                 if 'compared' in result_list[x]:
+    #                     result_list[x]['compared'].append(result)
+    #                 else:
+    #                     result_list[x]['compared'] = [result]
+    #             # result[y] = sub_matrix
+    #             similar_matrix.append(sub_matrix)
+    #             continue
+    #         seq_list = result['seq_list']
+    #         seq_body_list = []
+    #         for seq in seq_list:
+    #             seq_body_list.append(seq['seq_body'])
+    #         for x in range(len(result_list)):
+    #             sub_matrix = []
+    #             similar_num = 0
+    #             if not 'compared' in result_list[x]:
+    #                 result_list[x]['compared'] = []
+    #             if result in result_list[x]['compared']:
+    #                 continue
+    #             for seq in result_list[x]['seq_list']:
+    #                 # if seq in seq_list:
+    #                 if seq['seq_body'] in seq_body_list:
+    #                     similar_num += 1
+    #             result['compared'].append(result_list[x])
+    #             result_list[x]['compared'].append(result)
+    #             if len(seq_list) >= len(result_list[x]['seq_list']):
+    #                 # similar_matrix[y][x] = similar_num / len(seq_list)
+    #                 if len(seq_list)  != 0:
+    #                     sub_matrix.append(similar_num / len(seq_list))
+    #                 else:
+    #                     sub_matrix.append(0)
+    #             else:
+    #                 # similar_matrix[y][x] = similar_num / len(result_list[x]['seq_list'])
+    #                 sub_matrix.append(similar_num / len(result_list[x]['seq_list']))
+    #             # similar_matrix[y] = sub_matrix
+    #         similar_matrix.append(sub_matrix)
+    #     print(similar_matrix)
+    #     return similar_matrix
+    # 统计序列相似度并输出表格
+    # 相似性=(序列长度-不同的长度)/序列长度
+    # 如果A≠B，那么以短的为准，相似性=(短序列长度-不同序列长度)/短序列长度
+    def similarity_seq_body(self, result_list):
+        # print(result_list)
+        if not result_list or len(result_list) <= 0:
+            return False
+        similar_matrix = []
+        # for y in range(0, len(result_list)):
+        for result in result_list:
+            # similar_matrix[y] = [len(result_list)]
+            # result = result_list[y]
+            result['compared'] = []
+            sub_matrix = []
+            if not result or not('seq_list' in result) or len(result['seq_list']) <= 0:
+                # for x in range(len(result_list)):
+                for resultx in result_list:
+                    sub_matrix.append(0)
+                    result['compared'].append(resultx)
+                    if 'compared' in resultx:
+                        resultx['compared'].append(result)
+                    else:
+                        resultx['compared'] = [result]
+                similar_matrix.append(sub_matrix)
+                continue
+            seq_list = result['seq_list']
+            seq_body_list = []
+            for seq in seq_list:
+                seq_body_list.append(seq['seq_body'])
+            # for x in range(len(result_list)):
+            for resultx in result_list:
+                # sub_matrix = []
+                similar_num = 0
+                if not('compared' in resultx):
+                    resultx['compared'] = []
+                # if result in resultx['compared']:
+                #     continue
+                for seq in resultx['seq_list']:
+                    if seq['seq_body'] in seq_body_list:
+                        similar_num += 1
+                result['compared'].append(resultx)
+                resultx['compared'].append(result)
+                if len(seq_list) >= len(resultx['seq_list']):
+                    if len(seq_list) != 0:
+                        sub_matrix.append(round(similar_num / len(seq_list), 5))
+                    else:
+                        sub_matrix.append(0)
+                else:
+                    sub_matrix.append(round(similar_num / len(resultx['seq_list']),5))
+            similar_matrix.append(sub_matrix)
+        # print(similar_matrix)
+        return similar_matrix
+
+    # # 保存相似度对比结果到xlsx
+    # def save_similarity_to_xlsx(self, result_list):
+    #     if not result_list or len(result_list) <= 0:
+    #         print("序列分析结果为空：已跳过相似度表格生成。")
+    #         return False
+    #     similar_matrix = self.similarity_seq_body(result_list)
+    #     if not similar_matrix or len(similar_matrix) <= 0:
+    #         print("相似度对比结果为空：已跳过相似度表格生成。")
+    #         return False
+    #     wb = openpyxl.Workbook()
+    #     ws = wb.active
+    #     # st = wb.create_sheet("相似性对比")
+    #     # st = wb.get_sheet_name('Sheet1')
+    #     st = ""
+    #     # if 'Sheet' in list(wb.get_sheet_names()):
+    #     #     st = wb.get_sheet_by_name('Sheet')
+    #     #     st.title = "相似性对比"
+    #     # else:
+    #     #     st = wb.create_sheet("相似性对比")
+    #     # st = wb.get_sheet_by_name('Sheet')
+    #     # st.title = "相似性对比"
+    #     # st.merge_cells(1, 1, 1, len(similar_matrix))
+    #     if 'Sheet' in wb.sheetnames:
+    #         st = wb['Sheet']
+    #         st.title = "相似性对比"
+    #     else:
+    #         st = wb.create_sheet("相似性对比")
+    #     # st.cell(1,1).alignment = openpyxl.styles.Alignment(horizontal='center', vertical='center')
+    #     st.cell(1, 1).alignment = Alignment('center', 'center')
+    #     merge_range = 'A1:' + str(openpyxl.utils.get_column_letter(len(similar_matrix) + 1)) + str(1)
+    #     # print("合并范围：" + merge_range)
+    #     st.merge_cells(merge_range)
+    #     st.cell(1, 1).value = '相似性对比'
+    #     titleFont = Font(name="黑体", size=12, bold=True)
+    #     st.cell(1, 1).font = titleFont
+    #     headFont = Font(name="Times New Roman", size=11, bold=True)
+    #     contentFont = Font(name="黑体", size=11)
+    #     for x in range(len(result_list)):
+    #         # st.cell(str(openpyxl.utils.get_column_letter(x + 1)) + '2').value = result_list[x][Util.get_file_name('file_name')]
+    #         st.cell(2, x + 1).value = Util.get_file_name(result_list[x]['file_name'])
+    #         st.cell(2, x + 1).font = headFont
+    #     for y in range(len(result_list)):
+    #         # st.cell(str(openpyxl.utils.get_column_letter(x + 1)) + '2').value = result_list[x][Util.get_file_name('file_name')]
+    #         st.cell(y + 3, 1).value = Util.get_file_name(result_list[y]['file_name'])
+    #         st.cell(y + 3, 1).font = headFont
+    #     # print(similar_matrix)
+    #     for y in range(len(similar_matrix)):
+    #         for x in range(len(similar_matrix)):
+    #             # st.cell(x + 2, y + 1).value = round(similar_matrix[y][x] * 100, 2)
+    #             st.cell(x + 3, y + 2).value = round(similar_matrix[x][y] * 100, 2)
+    #             st.cell(x + 3, y + 2).font = contentFont
+    #     try:
+    #         wb.save("Similarity.xlsx")
+    #     except PermissionError as e:
+    #         print("[错误] 序列相似对对比表格保存失败：文件已打开或被其他程序占用。")
+    # 保存相似度对比结果到xlsx
+    def save_similarity_to_xlsx(self, result_list):
+        if not result_list or len(result_list) <= 0:
+            print("序列分析结果为空：已跳过相似度表格生成。")
+            return False
+        similar_matrix = self.similarity_seq_body(result_list)
+        if not similar_matrix or len(similar_matrix) <= 0:
+            print("相似度对比结果为空：已跳过相似度表格生成。")
+            return False
+        wb = openpyxl.Workbook()
+        # ws = wb.active
+        st = ""
+        if 'Sheet' in wb.sheetnames:
+            st = wb['Sheet']
+            st.title = "相似性对比"
+        else:
+            st = wb.create_sheet("相似性对比")
+        st.cell(1, 1).alignment = Alignment('center', 'center')
+        merge_range = 'A1:' + str(openpyxl.utils.get_column_letter(len(similar_matrix) + 1)) + str(1)
+        st.merge_cells(merge_range)
+        st.cell(1, 1).value = '相似性对比'
+        titleFont = Font(name="黑体", size=12, bold=True)
+        st.cell(1, 1).font = titleFont
+        headFont = Font(name="Times New Roman", size=11, bold=True)
+        contentFont = Font(name="黑体", size=11)
+        for x in range(len(result_list)):
+            st.cell(2, x + 1).value = Util.get_file_name(result_list[x]['file_name'])
+            st.cell(2, x + 1).font = headFont
+        for y in range(len(result_list)):
+            st.cell(y + 3, 1).value = Util.get_file_name(result_list[y]['file_name'])
+            st.cell(y + 3, 1).font = headFont
+        # print(similar_matrix)
+        for y in range(len(similar_matrix)):
+            for x in range(len(similar_matrix)):
+                st.cell(x + 3, y + 2).value = round(similar_matrix[x][y] * 100, 2)
+                st.cell(x + 3, y + 2).font = contentFont
+        similar_excle_name = self.result_path + "Similarity_" + self.time_str + ".xlsx"
+        try:
+            # wb.save("Similarity.xlsx")
+            wb.save(similar_excle_name)
+            print("[提示] 序列相似对比结果已保存在[" + similar_excle_name + "]中。")
+        except PermissionError as e:
+            print("[错误] 序列相似度对比表格保存失败：文件已打开或被其他程序占用。")
+
+
     # 提取序列
     def extract_seqs(self, result_list):
         if not result_list or len(result_list) <= 0:
@@ -290,7 +655,8 @@ class SeqCounter:
                     for seq in seq_list:
                         # if self.ignore_empty_seq_flag and len(seq['seq_body']) <= 0:
                         #     continue
-                        if not seq or not ('seq_name' in seq) or len(seq['seq_name']) <= 0 or not ('seq_body' in seq) or len(seq['seq_body']) <= 0:
+                        if not seq or not ('seq_name' in seq) or len(seq['seq_name']) <= 0 or not (
+                                'seq_body' in seq) or len(seq['seq_body']) <= 0:
                             continue
                         file.write(">" + seq['seq_name'] + "\n" + seq['seq_body'] + "\n")
         else:
@@ -300,11 +666,13 @@ class SeqCounter:
             if not combine_line_seq_list or len(combine_line_seq_list) <= 0:
                 return False
             for seq in combine_line_seq_list:
-                if not seq or not ('seq_name' in seq) or len(seq['seq_name']) <= 0 or not ('seq_body' in seq) or len(seq['seq_body']) <= 0:
+                if not seq or not ('seq_name' in seq) or len(seq['seq_name']) <= 0 or not ('seq_body' in seq) or len(
+                        seq['seq_body']) <= 0:
                     continue
                 # if self.ignore_empty_seq_flag and len(seq['seq_body']) <= 0:
                 #     continue
-                name = Util.get_file_name(seq['file_name']) + "_" + seq['seq_name'].replace("\\", "#").replace("/", "#") + self.extract_extension_name
+                name = Util.get_file_name(seq['file_name']) + "_" + seq['seq_name'].replace("\\", "#").replace("/",
+                                                                                                               "#") + self.extract_extension_name
                 with open(seqs_extract_path + name, 'w', encoding=self.encoding) as file:
                     file.write(">" + seq['seq_name'] + "\n" + seq['seq_body'] + "\n")
             # return False
@@ -351,6 +719,10 @@ class SeqCounter:
         result_list = self.statistics()
         self.show_result(result_list)
         self.save_result(result_list)
+        # ================================
+        # self.similarity_seq_body(result_list)
+        self.save_similarity_to_xlsx(result_list)
+        # ================================
         print()
         print("-" * 50)
         print("统计完毕，结果已保存于[" + self.result_path + self.save_file + "]中。")
